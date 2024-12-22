@@ -1,0 +1,344 @@
+﻿@model EmpMng.ViewModel.DeptViewModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        <div class="col-md-10">
+            @Html.HiddenFor(model => model.DepartmentId, new { htmlAttributes = new { @class = "form-control", @id = "DeptId" } })
+            @Html.ValidationMessageFor(model => model.DepartmentId, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.DepartmentName, "Department Name", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.DepartmentName, new { htmlAttributes = new { @class = "form-control", @id = "DeptName" } })
+            @Html.ValidationMessageFor(model => model.DepartmentName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Budget, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Budget, new { htmlAttributes = new { @class = "form-control", @id = "DeptBudget", type = "number", min = "0", step = "0.01" } })
+            @Html.ValidationMessageFor(model => model.Budget, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ManagerId, "Manager", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownListFor(model => model.ManagerId, (IEnumerable<SelectListItem>)ViewBag.EmployeeList, "---Select---", new { @class = "form-control", @id = "ddlEmployee" })
+            @*@Html.EditorFor(model => model.EmployeeId, new { htmlAttributes = new { @class = "form-control" } })*@
+            @Html.ValidationMessageFor(model => model.ManagerId, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="button" id="btnAdd" value="Add" class="btn btn-primary" />
+            <input type="button" id="btnEdit" value="Edit" class="btn btn-primary" style="display:none;" />
+        </div>
+    </div>
+</div>
+    <hr />
+}
+
+
+<div class="card">
+    <div class="card-header">
+
+        <h3>Department List: <span class="badge bg-success" id="totalCount"></span></h3>
+
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div style="height: 650px; overflow-x:scroll;overflow-x: auto;width: 100%; overflow-y: auto">
+                <table class="table cell-border table-responsive table-hover table-striped" id="recordTable" @*style="display:none;"*@>
+                    <thead>
+                        <tr>
+
+                            <th>Department</th>
+                            <th>Budget</th>
+                            <th>Manager</th>
+                            <th>Action</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="recordTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<div class="row">
+        <div class="col-nd-12">
+            <div class="portlet box portlet-primary">
+
+                <div class="portlet-header">
+                    <div class="caption">
+
+                        <h4>Department List</h4>
+                    </div>
+                </div>
+
+                <div class="porlet-Body">
+                    @{Html.RenderAction("GetAlldept", "Dept");}
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>*@
+
+@*<div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>*@
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+
+
+
+<script>
+    $(document).ready(function () {
+        //debugger;
+        LoadData();
+
+        $('#DeptBudget').on('input', function () {
+            var value = parseFloat($(this).val());
+            if (value < 0) {
+                alert("Budget must be a positive number.");
+                $(this).val(''); // Clear invalid input
+            }
+        });
+
+        $("#btnAdd").click(function () {
+            //debugger;
+            //var deptId = $("#DeptId").val();
+            //if (deptId == "undefined") {
+            //    deptId = 0;
+            //}
+            var deptName = $("#DeptName").val();
+            var budget = $("#DeptBudget").val();
+            var employeeId = $("#ddlEmployee").val();
+            //alert(deptName);
+            var dataList = JSON.stringify({ deptName: deptName, budget: budget, employeeId: employeeId });
+            if (deptName != "" && (budget != "" || budget>= 0)) {
+                $.ajax({
+                 type: 'POST',
+                 contentType: 'application/json',
+                 dataType: 'json',
+                 url: '@Url.Action("AddOrEdit", "Dept")',
+                 data: dataList,
+                 beforeSend: function () {
+                     $('#cover-spin').show();
+                 },
+                    success: function (data) {
+                        //alert("Total Row Affected: " + data.saveDataCount);
+                        debugger;
+                        var res = data.Data;
+                        if (res > 0) {
+                            swal.fire({
+                                title: "Saved Successfully",
+                                //text: "Total Row Affected: " + data.saveDataCount,
+                                icon: "success",
+                                button: "OK",
+                                showClass: {
+                                    popup: 'animate__animated animate__fadeInDown'
+                                },
+                                hideClass: {
+                                    popup: 'animate__animated animate__fadeOutUp'
+                                }
+                            });
+                        } else {
+                            swal.fire({
+                                title: "Duplicate",
+                                //text: "Total Row Affected: " + data.saveDataCount,
+                                icon: "success",
+                                button: "OK",
+                                showClass: {
+                                    popup: 'animate__animated animate__fadeInDown'
+                                },
+                                hideClass: {
+                                    popup: 'animate__animated animate__fadeOutUp'
+                                }
+                            });
+                        }
+                        
+                        $('#cover-spin').hide();
+                        event.preventDefault();
+                        location.reload();
+                }
+             });
+            }
+        });
+    });
+
+
+    function LoadData() {
+        //debugger;
+        cd = (new Date()).toISOString().split('T')[0];
+
+                $.ajax({
+                    type: 'POST',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    url: '@Url.Action("GetAlldept", "Dept")',
+                    beforeSend: function () {
+                        $('#cover-spin').show();
+                    },
+                    success: function (data) {
+
+                        var DataList = data.Data.length;
+                        $("#totalCount").text(DataList);
+                        $("#recordTableBody").html("");
+                        //$('#recordTable').DataTable().destroy();
+                        if (DataList > 0) {
+                            for (var i = 0; i < DataList; i++) {
+
+                                $("#recordTableBody").append('<tr>' +
+
+                                    '<td style="display:none;">' +
+                                    data.Data[i].DepartmentId +
+                                    '</td>' +
+                                    '<td style="width: 40%">' +
+                                    data.Data[i].DepartmentName +
+                                    '</td>' +
+                                    '<td style="width: 20%">' +
+                                    data.Data[i].Budget +
+                                    '</td>' +
+                                    '<td style="width: 20%">' +
+                                    data.Data[i].EmployeeName +
+                                    '</td>' +
+                                    '<td>' +
+                                    '<button class="btn btn-success selectButton" data-index="${i}"><i class="fa fa-pencil"></i> Select</button>' +
+                                    '</td>' +
+                                    '</tr>');
+                            }
+                            $('#recordTable').show();
+                            //var table = $('#recordTable').DataTable();
+
+                            //new $.fn.dataTable.Buttons(table, {
+                            //    buttons: [
+                            //        { extend: 'excel', className: 'excelBtn', title: 'Distributor Stock Report_' + cd, text: 'Click For Excel Export', filename: 'Distributor_Stock_' + cd }
+                            //    ]
+                            //});
+
+                            //table.buttons(0, null).container().prependTo(
+                            //    table.table().container()
+                            //);
+                            var selectedDepartmentId = null;
+                            $(document).on('click', '.selectButton', function () {
+                                debugger;
+                                // Get the clicked button's parent row
+
+
+                                var row = $(this).closest('tr');
+                                // Extract data from the row's cells
+                                var selectedDepartmentId = row.find('td:eq(0)').text().trim(); // Hidden DepartmentId
+                                var departmentName = row.find('td:eq(1)').text(); // DepartmentName
+                                var budget = row.find('td:eq(2)').text(); // Budget
+                                var empName = row.find('td:eq(3)').text().trim();
+
+                                //$('#DeptId').val(departmentId);
+                                $('#DeptName').val(departmentName);
+                                $('#DeptBudget').val(budget);
+                                var empId = $('#ddlEmployee option').filter(function () {
+                                    return $(this).text().trim() === empName;
+                                }).val();
+                                $('#ddlEmployee').val(empId);
+                                $('#btnAdd').hide();
+                                $('#btnEdit').show();
+                                // Display or use the row data
+                                //alert(`DepartmentId: ${departmentId}, DepartmentName: ${departmentName}, Budget: ${budget}`);
+
+            $("#btnEdit").click(function () {
+            debugger;
+            var deptId = selectedDepartmentId;
+            var deptName = $("#DeptName").val();
+            var budget = $("#DeptBudget").val();
+            var employeeId = $("#ddlEmployee").val();
+            //alert(deptName);
+                var dataList = JSON.stringify({ deptId: deptId, deptName: deptName, budget: budget, employeeId: employeeId });
+            if (deptName != "" && (budget != "" || budget>= 0)) {
+                $.ajax({
+                 type: 'POST',
+                 contentType: 'application/json',
+                 dataType: 'json',
+                 url: '@Url.Action("AddOrEdit", "Dept")',
+                 data: dataList,
+                 beforeSend: function () {
+                     $('#cover-spin').show();
+                 },
+                    success: function (data) {
+                        //alert("Total Row Affected: " + data.saveDataCount);
+                        var res = data;
+                        swal.fire({
+                            title: "Saved Successfully",
+                            //text: "Total Row Affected: " + data.saveDataCount,
+                            icon: "success",
+                            button: "OK",
+                            showClass: {
+                                popup: 'animate__animated animate__fadeInDown'
+                            },
+                            hideClass: {
+                                popup: 'animate__animated animate__fadeOutUp'
+                            }
+                        });
+                        $('#cover-spin').hide();
+                        event.preventDefault();
+                        location.reload();
+                }
+             });
+            }
+        });
+
+                            });
+
+
+                        } else {
+                            swal.fire({
+                                title: "Message",
+                                text: "Data Not Found",
+                                icon: "warning",
+                                button: "OK",
+                                showClass: {
+                                    popup: 'animate__animated animate__fadeInDown'
+                                },
+                                hideClass: {
+                                    popup: 'animate__animated animate__fadeOutUp'
+                                }
+                            });
+                        }
+                        $('#cover-spin').hide();
+                    }
+                });
+
+
+    }
+
+
+
+</script>

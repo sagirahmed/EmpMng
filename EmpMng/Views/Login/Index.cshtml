@@ -1,0 +1,125 @@
+﻿@{ Layout = null; }
+<html lang="en">
+<head>
+    <title>WALTON</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--===============================================================================================-->
+    <link rel="icon" type="image/png" href="~/Content/Login_Theme/images/icons/favicon.ico" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Content/Login_Theme/vendor/bootstrap/css/bootstrap.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Content/Login_Theme/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Content/Login_Theme/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Content/Login_Theme/vendor/animate/animate.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Content/Login_Theme/vendor/css-hamburgers/hamburgers.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Content/Login_Theme/vendor/animsition/css/animsition.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Content/Login_Theme/vendor/select2/select2.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Content/Login_Theme/vendor/daterangepicker/daterangepicker.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Content/Login_Theme/css/util.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/Login_Theme/css/main.css">
+    <!--===============================================================================================-->
+</head>
+<body>
+
+    <div class="limiter">
+        @*<div class="container-login100" style=" background-image: url('../../Content/Login_Theme/images/bg-01.jpg');">*@
+        <div class="container-login100">
+            <div class="wrap-login100 p-t-30 p-b-50">
+                <span class="login100-form-title p-b-41">
+                    Account  Login
+                </span>
+                <form class="login100-form validate-form p-b-33 p-t-5">
+
+                    <div class="wrap-input100 validate-input" data-validate="Enter username">
+                        <input class="input100" type="text" id="UserName" name="username" placeholder="User name">
+                        <span class="focus-input100" data-placeholder="&#xe82a;"></span>
+                    </div>
+
+                    <div class="wrap-input100 validate-input" data-validate="Enter password">
+                        <input class="input100" type="password" name="pass" id="Password" placeholder="Password">
+                        <span class="focus-input100" data-placeholder="&#xe80f;"></span>
+                    </div>
+
+                    <div class="container-login100-form-btn m-t-32">
+                        <button id="btnLogin" type="button" class="login100-form-btn">Login</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="dropDownSelect1"></div>
+
+    <!--===============================================================================================-->
+    <script src="~/Content/Login_Theme/vendor/jquery/jquery-3.2.1.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Content/Login_Theme/vendor/animsition/js/animsition.min.js"></script>
+    <!--===============================================================================================-->
+    @*<script src="~/Content/Login_Theme/vendor/bootstrap/js/popper.js"></script>
+            <script src="~/Content/Login_Theme/vendor/bootstrap/js/popper.js"></script>
+        <script src="~/Content/Login_Theme/vendor/bootstrap/js/bootstrap.min.js"></script>*@
+    <!--===============================================================================================-->
+    <script src="~/Content/Login_Theme/vendor/select2/select2.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Content/Login_Theme/vendor/daterangepicker/moment.min.js"></script>
+    <script src="~/Content/Login_Theme/vendor/daterangepicker/daterangepicker.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Content/Login_Theme/vendor/countdowntime/countdowntime.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Content/Login_Theme/js/main.js"></script>
+
+</body>
+</html>
+
+@*@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")*@
+
+<script>
+        //$(function () {
+        //    $('#UserName').addClass('form-control');
+        //    $('#Password').addClass('form-control');
+        //});
+
+    $('#btnLogin').click(function () {
+
+        login();
+    });
+    var  a = "@Session["WrongMsg"]";
+    var login = function () {
+
+            var url = '@Url.Action("Login", "Login")';
+            var urlReturn = '@Url.Action("Index", "Login")';
+            var redirect= '@Url.Action("Index", "Home")';
+            var username = $('#UserName').val();
+            var password = $("#Password").val();
+            if (username != "" && password != "") {
+
+                $.post(url, { username: username, password: password }, function (data) {
+                    debugger;
+                    if (data == "OK") {
+
+                        //window.location.href = redirect;
+                        window.location = redirect;
+                    }
+                    else {
+                        //window.location.href = urlReturn;
+                        window.location = urlReturn;
+
+                    }
+                });
+
+            }
+
+        }
+</script>
+@*}*@

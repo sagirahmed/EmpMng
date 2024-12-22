@@ -1,0 +1,82 @@
+﻿@using EmpMng.Models;
+@using EmpMng.Models.DbContext
+@model EmpMng.Models.DbContext.tblLogin
+@{
+    var user = Session["UserName"] as tblLogin;
+}
+
+<aside class="main-sidebar sidebar-light-warning elevation-4">
+    <!-- Brand Logo -->
+    <a href="" class="brand-link navbar-light">
+        <img src="~/Content/Admin/dist/img/Processor.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+             style="opacity: .8">
+        <span class="brand-text"><b>Admin Panel</b></span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar user panel (optional) -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            @*<div class="image">
+                    <img src="~/Content/Admin/dist/img/useravator1.jpg" class="img-circle elevation-2" alt="User Image">
+                </div>*@
+            @if (Session["UserName"] != null)
+            {
+                <div class="info">
+                    <a href="#" class="d-block"><b>@Session["UserName"]</b></a>
+                </div>
+            }
+
+        </div>
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="list-unstyled">
+
+                @if (Session["MenuMaster"] != null)
+                {
+
+                    var menuMaster = (List<MenuModels>)Session["MenuMaster"];
+                    var groupByMenu = menuMaster.GroupBy(x => x.MainMenuName).ToList();
+
+
+                    foreach (var MenuList in groupByMenu)
+                    {
+
+                        var urlLink = (MenuList.Key).Replace(" ", "");
+
+
+
+                        <li>
+
+
+
+                            <a href="#@urlLink" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-share nav-icon text-blue"></i><b> @MenuList.Key </b></a>
+
+                            @*<a href="#">@MenuList.Key<span class="caret"></span></a>*@
+                            <ul id="@urlLink" class="collapse list-unstyled ">
+                                @foreach (var subMenuList in MenuList)
+                                {
+
+                                    <li class="nav-item" style="">
+                                        <a href="@Url.Action(subMenuList.ActionName, subMenuList.ControllerName)" class="nav-link">
+                                            <i class="far fa-circle nav-icon text-blue"></i> @subMenuList.SubMenuName
+                                        </a>
+                                    </li>
+
+                                    @*<li>@Html.ActionLink(@SubMenuList.ActionName,@SubMenuList.ControllerName)@SubMenuList.SubMenuName</li>*@
+
+                                }
+                            </ul>
+                            <div class="bottom" style="border-bottom: 1px solid #ccc;"><div class="box-content" style=" display: inline-block; width: 200px; padding: 1px; "></div></div>
+                        </li>
+
+                    }
+
+                }
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>

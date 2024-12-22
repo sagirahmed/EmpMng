@@ -1,0 +1,415 @@
+﻿
+@model EmpMng.ViewModel.EmpViewModel
+
+@{
+    ViewBag.Title = "Index";
+
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.EmployeeId, new { htmlAttributes = new { @class = "form-control", @id = "empId" } })
+                @Html.ValidationMessageFor(model => model.EmployeeId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EmployeeName, "Employee Name", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.EmployeeName, new { htmlAttributes = new { @class = "form-control", @id = "empName" } })
+                @Html.ValidationMessageFor(model => model.EmployeeName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @type = "email", @class = "form-control", @id = "email" } })
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control", @id = "phone" } })
+                @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Position, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Position, new { htmlAttributes = new { @class = "form-control", @id = "position" } })
+                @Html.ValidationMessageFor(model => model.Position, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DepartmentId, "Department", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.DepartmentId, (IEnumerable<SelectListItem>)ViewBag.DepartmentList, "---Select---", new { @class = "form-control", @id = "ddlDepartment" })
+                @Html.ValidationMessageFor(model => model.DepartmentId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.JoinDate, "Join Date", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.JoinDate, "{0:yyyy-MMM-dd}", new { htmlAttributes = new { @type = "date", @class = "form-control", @id = "joinDate" } })
+                @Html.ValidationMessageFor(model => model.JoinDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.Status, new { htmlAttributes = new { @id = "status" } })
+                    @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        @*<div class="form-group">
+                @Html.LabelFor(model => model.Deleted, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <div class="checkbox">
+                        @Html.EditorFor(model => model.Deleted)
+                        @Html.ValidationMessageFor(model => model.Deleted, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>*@
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                @*<input type="submit" value="Create" class="btn btn-default" />*@
+                <input type="button" id="btnAdd" value="Add" class="btn btn-primary" />
+                <input type="button" id="btnEdit" value="Edit" class="btn btn-primary" style="display:none;" />
+            </div>
+        </div>
+    </div>
+    <hr />
+}
+<div class="card">
+    <div class="card-header">
+
+        <h3>
+            Employee List: @*<span class="badge bg-success" id="totalCount"></span>*@
+        </h3>
+
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div style="height: 650px; overflow-x:scroll;overflow-x: auto;width: 100%; overflow-y: auto">
+                <table class="table cell-border table-responsive table-hover table-striped" id="recordTable" @*style="display:none;"*@>
+                    <thead>
+                        <tr>
+
+                            <th>Employee</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Position</th>
+                            <th>Department</th>
+                            <th>Join Date</th>
+                            <th>Status</th>
+                            <th>Deleted</th>
+                            <th>Action</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="recordTableBody">
+                    </tbody>
+                </table>
+
+                <div id="paginationControls">
+                    <button id="prevPage" class="btn btn-primary" disabled>Previous</button>
+                    <span id="pageInfo"></span>
+                    <button id="nextPage" class="btn btn-primary">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+
+<script>
+    $(document).ready(function () {
+
+    var currentPage = 1;
+    var pageSize = 2;
+    var totalCount = 0;
+
+        function loadEmployeeData(pageNumber) {
+            //debugger;
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            url: '@Url.Action("GetEmployeesPaginated", "Employee")',
+            data: JSON.stringify({ pageNumber: pageNumber, pageSize: pageSize }),
+            beforeSend: function () {
+                $('#cover-spin').show();
+            },
+            success: function (response) {
+                $('#cover-spin').hide();
+                totalCount = response.TotalCount;
+                renderEmployeeTable(response.Data);
+                updatePaginationControls(pageNumber);
+            },
+            error: function () {
+                $('#cover-spin').hide();
+                alert('Error loading data.');
+            }
+        });
+    }
+
+   function renderEmployeeTable(employees) {
+    var tableBody = $("#recordTableBody");
+    tableBody.empty(); // Clear previous data
+
+    if (employees.length > 0) {
+        $.each(employees, function (index, employee) {
+            var joinDate = employee.JoinDate;
+
+            // Check if the date is in the serialized format and convert it
+            var formattedDate = formatDate(joinDate);
+
+            var row = `<tr>
+                <td style="display:none;">${employee.EmployeeId}</td>
+                <td>${employee.EmployeeName}</td>
+                <td>${employee.Email}</td>
+                <td>${employee.Phone}</td>
+                <td>${employee.Position}</td>
+                <td>${employee.DepartmentName}</td>
+                <td>${formattedDate}</td> <!-- Display formatted date -->
+                <td>${employee.Status}</td>
+                <td>${employee.Deleted}</td>
+                <td>
+                    <!-- Select Button -->
+                    <button class="btn btn-success selectButton" data-index="${index}">
+                        <i class="fa fa-pencil"></i> Select
+                    </button>
+                    <button class="btn btn-danger deleteButton" data-index="${index}">
+                        <i class="fa fa-box"></i> Delete
+                    </button>
+                </td>
+            </tr>`;
+
+            tableBody.append(row);
+        });
+
+        // Delete button click handler
+        $(document).on("click", ".deleteButton", function () {
+            var row = $(this).closest('tr');
+            var selectedEmpId = row.find('td:eq(0)').text().trim(); // Get EmployeeId from hidden column
+
+            if (selectedEmpId) {
+                var empId = selectedEmpId;
+                var dataList = JSON.stringify({ empId: empId });
+
+                $.ajax({
+                    type: 'POST',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    url: '@Url.Action("EmpDeleted", "Employee")', // Ensure this URL is correct
+                    data: dataList,
+                    beforeSend: function () {
+                        $('#cover-spin').show();
+                    },
+                    success: function (data) {
+                        swal.fire({
+                            title: "Deleted Successfully",
+                            icon: "success",
+                            button: "OK",
+                            showClass: {
+                                popup: 'animate__animated animate__fadeInDown'
+                            },
+                            hideClass: {
+                                popup: 'animate__animated animate__fadeOutUp'
+                            }
+                        });
+                        $('#cover-spin').hide();
+                        location.reload();
+                    }
+                });
+            }
+        });
+
+        // Select button click handler
+        $(document).on('click', '.selectButton', function () {
+            var row = $(this).closest('tr');
+            var selectedEmpId = row.find('td:eq(0)').text().trim();
+            var empName = row.find('td:eq(1)').text();
+            var email = row.find('td:eq(2)').text();
+            var phone = row.find('td:eq(3)').text();
+            var position = row.find('td:eq(4)').text();
+            var departmentName = row.find('td:eq(5)').text().trim();
+            var joinDate = row.find('td:eq(6)').text(); // Get the formatted join date
+            var status = row.find('td:eq(7)').text();
+
+            $('#empName').val(empName);
+            $('#email').val(email);
+            $('#phone').val(phone);
+            $('#position').val(position);
+
+            // Update department dropdown value
+            var departmentId = $('#ddlDepartment option').filter(function () {
+                return $(this).text().trim() === departmentName;
+            }).val();
+            $('#ddlDepartment').val(departmentId);
+            var dateParts = joinDate.split("-");
+            if (dateParts.length === 3) {
+                var formattedForInput = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`; // yyyy-mm-dd
+                $('#joinDate').val(formattedForInput);
+            } else {
+                $('#joinDate').val(""); // Clear if the date is invalid
+            }
+            $('#status').prop('checked', status === "true");
+
+            //alert(selectedEmpId)
+
+            $('#btnAdd').hide();
+            $('#btnEdit').show();
+
+            $("#btnEdit").click(function () {
+            debugger;
+            var empId = selectedEmpId;
+            var empName = $("#empName").val();
+            var email = $("#email").val();
+            var phone = $("#phone").val();
+            var position = $("#position").val();
+            var departmentId = $("#ddlDepartment").val();
+            var joinDate = $("#joinDate").val();
+            var status = $("#status").prop('checked') ? "true" : "false"; // Use boolean status
+
+            var dataList = JSON.stringify({
+                empId: empId, empName: empName, email: email, phone: phone,
+                position: position, departmentId: departmentId, joinDate: joinDate, status: status
+            });
+
+            if (email && (phone || phone >= 0)) {
+                $.ajax({
+                    type: 'POST',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    url: '@Url.Action("AddOrEditEmp", "Employee")',
+                    data: dataList,
+                    beforeSend: function () {
+                        $('#cover-spin').show();
+                    },
+                    success: function (data) {
+                        swal.fire({
+                            title: "Saved Successfully",
+                            icon: "success",
+                            button: "OK",
+                            showClass: {
+                                popup: 'animate__animated animate__fadeInDown'
+                            },
+                            hideClass: {
+                                popup: 'animate__animated animate__fadeOutUp'
+                            }
+                        });
+                        $('#cover-spin').hide();
+                        location.reload();
+                    }
+                });
+            }
+            });
+
+        });
+
+
+    } else {
+        tableBody.append('<tr><td colspan="9">No data available</td></tr>');
+    }
+}
+
+// Format Date function to convert /Date(1734631200000)/ to dd-mm-yyyy
+function formatDate(date) {
+    if (!date) return "";
+    var dateObj;
+
+    // Check if it's in the /Date() format
+    if (date.indexOf("/Date") !== -1) {
+        var timestamp = parseInt(date.replace("/Date(", "").replace(")/", ""));
+        dateObj = new Date(timestamp);
+    } else {
+        dateObj = new Date(date); // If it's already a Date object or a valid string
+    }
+
+    var day = ("0" + dateObj.getDate()).slice(-2);
+    var month = ("0" + (dateObj.getMonth() + 1)).slice(-2); // Months are zero-based
+    var year = dateObj.getFullYear();
+
+    return day + "-" + month + "-" + year; // Return formatted date as dd-mm-yyyy
+}
+
+
+
+
+    function updatePaginationControls(pageNumber) {
+        // Update the page information
+        var totalPages = Math.ceil(totalCount / pageSize);
+        $('#pageInfo').text(`Page ${pageNumber} of ${totalPages}`);
+
+        // Enable/Disable the pagination buttons
+        if (pageNumber <= 1) {
+            $('#prevPage').attr('disabled', true);
+        } else {
+            $('#prevPage').attr('disabled', false);
+        }
+
+        if (pageNumber >= totalPages) {
+            $('#nextPage').attr('disabled', true);
+        } else {
+            $('#nextPage').attr('disabled', false);
+        }
+    }
+
+    // Handle "Previous" button click
+    $('#prevPage').click(function () {
+        if (currentPage > 1) {
+            currentPage--;
+            loadEmployeeData(currentPage);
+        }
+    });
+
+    // Handle "Next" button click
+    $('#nextPage').click(function () {
+        var totalPages = Math.ceil(totalCount / pageSize);
+        if (currentPage < totalPages) {
+            currentPage++;
+            loadEmployeeData(currentPage);
+        }
+    });
+
+    // Initial load of the employee data
+        loadEmployeeData(currentPage);
+
+
+
+});
+
+
+
+
+
+
+</script>

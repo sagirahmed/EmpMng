@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="184a75491f944e5c933515839cfb1d43" Name="Diagram1">
+        <EntityTypeShape EntityType="EmployeeManagmentModel.tblDepartment" Width="1.5" PointX="8.125" PointY="6.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EmployeeManagmentModel.tblEmployee" Width="1.5" PointX="5.75" PointY="2.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EmployeeManagmentModel.tblLogin" Width="1.5" PointX="3" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="EmployeeManagmentModel.tblMainMenu" Width="1.5" PointX="0.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="EmployeeManagmentModel.tblPerformanceReview" Width="1.5" PointX="8" PointY="2.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="EmployeeManagmentModel.tblRole" Width="1.5" PointX="0.75" PointY="4.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="EmployeeManagmentModel.tblSubMenu" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <AssociationConnector Association="EmployeeManagmentModel.FK_tblPerformanceReview_tblEmployee" ManuallyRouted="false" />
+        <AssociationConnector Association="EmployeeManagmentModel.FK_tblLogin_tblRole" ManuallyRouted="false" />
+        <AssociationConnector Association="EmployeeManagmentModel.FK_tblSubMenu_tblMainMenu" ManuallyRouted="false" />
+        <AssociationConnector Association="EmployeeManagmentModel.FK_tblSubMenu_tblRole" ManuallyRouted="false" />
+        <AssociationConnector Association="EmployeeManagmentModel.FK_tblDepartment_tblEmployee" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,47 @@
+﻿@model IEnumerable<EmpMng.ViewModel.DeptViewModel>
+
+@{
+    ViewBag.Title = "GetAlldept";
+}
+
+
+@*<p>
+    @Html.ActionLink("Create New", "Create")
+</p>*@
+<table class="table">
+    <tr>
+        @*<th>
+            @Html.DisplayNameFor(model => model.DepartmentId)
+        </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.DepartmentName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Budget)
+        </th>
+        <th>
+           Action
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        @*<td>
+            @Html.DisplayFor(modelItem => item.DepartmentId)
+        </td>*@
+        <td>
+            @Html.DisplayFor(modelItem => item.DepartmentName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Budget)
+        </td>
+        <td>
+            <input type="button" value="Select" id="btnSelect" class="btn btn-success" />
+            @Html.ActionLink("Edit", "Edit", new {  id=item.DepartmentId }) |
+            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+        </td>
+    </tr>
+}
+
+</table>
